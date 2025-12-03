@@ -10,6 +10,7 @@ habits = {
 """
 
 import json
+import os
 from datetime import datetime
 
 
@@ -60,18 +61,29 @@ def view_all_habits(habits):
 def add_new_habit(habits, today):
     """add new habit to habits, return updated habits"""
     habit_name = input("Enter the habit name: ")
+    habit_type = input("Enter the habit type [1] measurable [2] check: ")
+
+    if habit_type == "1":
+        habit_type = "measurable"
+    elif habit_type == "2":
+        habit_type = "check"
+    else:
+        print("Enter a valid choice")
+        return habits
+
     # if the habit already exists, don't update habits
     if habit_name in habits:
         print("This habit already exists!")
         return habits
 
-    habits[habit_name] = {"log": {today: False}}
+    default_value = False if habit_type == "check" else 0.0
+
+    habits[habit_name] = {"type": habit_type, "log": {today: default_value}}
 
     return habits
 
 
-def mark_habit_as_done(habits, today):
-    """update 'done' to True for a today"""
+def mark_check_habit_as_done(habits, today):
     habit_name = input("Enter the habit name: ")
 
     # if the habit doesn't exist, don't change habits
@@ -79,8 +91,34 @@ def mark_habit_as_done(habits, today):
         print("Habit doesn't exist")
         return habits
 
+    habit_type = habits[habit_name]["type"]
+    if habit_type != "check":
+        print("can't check measurable habits!")
+        return habits
     # update the habit
     habits[habit_name]["log"][today] = True
+    return habits
+
+
+def edit_measurable_habit(habits):
+    habit_name = input("Enter the habit name: ")
+
+    if habit_name not in habits:
+        print("habit doesn't exist")
+        return habits
+
+    habit_type = habits[habit_name]["type"]
+    if habit_type != "measurable":
+        print("can't edit check habits")
+        return habits
+
+    try:
+        value = float(input("Enter the new value: "))
+    except ValueError:
+        print("enter a valid float")
+        return habits
+
+    habits[habit_name]["log"][today] = value
     return habits
 
 
@@ -100,7 +138,8 @@ while True:
         "Chose what to do:",
         "[1] View all habits",
         "[2] Add new habit",
-        "[3] Mark habit as done",
+        "[3] Mark check habit as done",
+        "[4] Edit measurable habit",
         sep="\n",
     )
     user_input = input(">>> ")
@@ -112,5 +151,8 @@ while True:
         habits = add_new_habit(habits, today)
         save_habits(habits)
     elif user_input == "3":
-        habits = mark_habit_as_done(habits, today)
+        habits = mark_check_habit_as_done(habits, today)
+        save_habits(habits)
+    elif user_input == "4":
+        habits = edit_measurable_habit(habits)
         save_habits(habits)
