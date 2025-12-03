@@ -1,2 +1,3 @@
 [x] add log
-[ ] add measurable support
+[x] add measurable support
+[ ] refactor
