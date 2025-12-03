@@ -1,11 +1,14 @@
 {
-    "study": {
-        "done": false
-    },
-    "workout": {
-        "done": true
-    },
-    "water": {
-        "done": false
+  "walk": {
+    "log": {
+      "2025-12-02": true,
+      "2025-12-03": false
     }
+  },
+  "study": {
+    "log": {
+      "2025-12-02": true,
+      "2025-12-03": false
+    }
+  }
 }

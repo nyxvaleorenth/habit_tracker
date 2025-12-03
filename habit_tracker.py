@@ -1,4 +1,16 @@
+"""
+habits = {
+    "habit1": {
+        "log": {"2025-12-2": "done", "2025-12-3": "done"},
+        "type": "measurable, check"
+        }
+}
+
+
+"""
+
 import json
+from datetime import datetime
 
 
 def load_habits():
@@ -23,26 +35,43 @@ def save_habits(habits):
         json.dump(habits, file, indent=4)
 
 
-def view_all_habits(habits):
-    """list all habits"""
+def update_habits(habits, today):
+    """adds today entry in habits log"""
     for habit in habits:
-        print(f"{habit}: {habits[habit]['done']}")
+        log = habits[habit]["log"]
+        if today in log:
+            continue
+
+        log[today] = False
+    return habits
 
 
-def add_new_habit(habits):
+def view_all_habits(habits):
+    """list all habits with log"""
+    print(50 * "=")
+    for habit in habits:
+        print(f"{habit}: ")
+        log = habits[habit]["log"]
+        for date in log:
+            print(f"{date}: {log[date]}")
+        print(50 * "=")
+
+
+def add_new_habit(habits, today):
     """add new habit to habits, return updated habits"""
     habit_name = input("Enter the habit name: ")
     # if the habit already exists, don't update habits
     if habit_name in habits:
         print("This habit already exists!")
         return habits
-    # add the new habit
-    habits[habit_name] = {"done": False}
+
+    habits[habit_name] = {"log": {today: False}}
+
     return habits
 
 
-def mark_habit_as_done(habits):
-    """update 'done' to True"""
+def mark_habit_as_done(habits, today):
+    """update 'done' to True for a today"""
     habit_name = input("Enter the habit name: ")
 
     # if the habit doesn't exist, don't change habits
@@ -51,12 +80,18 @@ def mark_habit_as_done(habits):
         return habits
 
     # update the habit
-    habits[habit_name]["done"] = True
+    habits[habit_name]["log"][today] = True
     return habits
 
 
-# load the habits from habits.json
+# variables
+today = datetime.now().strftime("%Y-%m-%d")
+
+# load habits from habits.json file
 habits = load_habits()
+
+update_habits(habits, today)
+save_habits(habits)
 
 # main program
 while True:
@@ -74,8 +109,8 @@ while True:
     if user_input == "1":
         view_all_habits(habits)
     elif user_input == "2":
-        habits = add_new_habit(habits)
+        habits = add_new_habit(habits, today)
         save_habits(habits)
     elif user_input == "3":
-        habits = mark_habit_as_done(habits)
+        habits = mark_habit_as_done(habits, today)
         save_habits(habits)
