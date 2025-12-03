@@ -1,0 +1,11 @@
+{
+    "study": {
+        "done": false
+    },
+    "workout": {
+        "done": true
+    },
+    "water": {
+        "done": false
+    }
+}
